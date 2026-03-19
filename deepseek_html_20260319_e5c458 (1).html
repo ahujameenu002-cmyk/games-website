@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+    <title>FunGalaxy · Play & Learn</title>
+    <!-- Google Fonts: playful, round sans-serif -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 (free) for cute icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f9e8b5 0%, #ffcfdf 100%);
+            min-height: 100vh;
+            padding: 1.5rem 1rem 3rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* main container */
+        .galaxy-wrapper {
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        /* header with playful name + search */
+        .fun-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.2rem 1.5rem;
+            margin-bottom: 2.5rem;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(8px);
+            padding: 1rem 2rem;
+            border-radius: 60px;
+            box-shadow: 0 15px 25px rgba(255, 140, 200, 0.25);
+            border: 2px solid white;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .logo-area i {
+            font-size: 3rem;
+            color: #b460f0;
+            filter: drop-shadow(2px 4px 6px #ffb3c6);
+        }
+
+        .logo-area h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #4a1d8c, #d62976, #fa7e1e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+            text-shadow: 3px 3px 0 #ffe69b;
+        }
+
+        .search-box {
+            background: white;
+            border-radius: 50px;
+            padding: 0.4rem 0.4rem 0.4rem 1.8rem;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 6px 12px rgba(200, 100, 200, 0.25);
+            border: 2px solid #ffeaa5;
+            flex: 1 1 280px;
+            max-width: 450px;
+        }
+
+        .search-box i {
+            color: #f07ab0;
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+
+        .search-box input {
+            border: none;
+            outline: none;
+            background: transparent;
+            width: 100%;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #3d2b5c;
+            padding: 0.7rem 0;
+        }
+
+        .search-box input::placeholder {
+            color: #c0a0d0;
+            font-weight: 400;
+            opacity: 0.8;
+        }
+
+        .search-box button {
+            background: #f5b0d0;
+            border: none;
+            border-radius: 40px;
+            padding: 0.7rem 1.8rem;
+            margin-left: auto;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: all 0.15s;
+            box-shadow: 0 4px 0 #b45f9b;
+            border: 2px solid #ffddf4;
+        }
+
+        .search-box button:hover {
+            background: #ff90c0;
+            transform: scale(0.98);
+            box-shadow: 0 2px 0 #b45f9b;
+        }
+
+        /* loading / error messages */
+        .status-message {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50px;
+            padding: 1rem 2rem;
+            margin: 1.5rem 0;
+            text-align: center;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #a6426f;
+            border: 3px dashed #fbb5d5;
+            backdrop-filter: blur(4px);
+        }
+
+        /* game grid — responsive magic */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 2rem 1.2rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        /* game card — pure fun */
+        .game-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 40px 40px 30px 30px;
+            padding: 1.5rem 0.8rem 1.2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 18px 25px -8px rgba(210, 80, 150, 0.4);
+            transition: transform 0.2s ease, box-shadow 0.2s;
+            border: 3px solid white;
+            cursor: pointer;
+            height: 100%;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px) rotate(1deg);
+            box-shadow: 0 25px 35px -5px #d86f9e;
+            background: rgba(255, 255, 255, 0.9);
+            border-color: #ffe68f;
+        }
+
+        /* icon container */
+        .icon-wrapper {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: #ffeaa6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.8rem;
+            border: 4px solid white;
+            box-shadow: 0 10px 0 #d48bb0;
+            transition: 0.1s linear;
+            overflow: hidden;
+        }
+
+        .game-card:hover .icon-wrapper {
+            box-shadow: 0 6px 0 #d48bb0;
+        }
+
+        .icon-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            background: #fcf0d5;
+        }
+
+        /* fallback icon if no image */
+        .fallback-icon {
+            font-size: 3.2rem;
+            color: #bb6bb0;
+        }
+
+        .game-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #3e206d;
+            line-height: 1.4;
+            margin: 0.4rem 0 0.2rem;
+            padding: 0 0.2rem;
+            word-break: break-word;
+        }
+
+        .play-hint {
+            font-size: 1rem;
+            font-weight: 600;
+            background: #fccfdc;
+            padding: 0.3rem 1.3rem;
+            border-radius: 40px;
+            color: #871c51;
+            margin-top: 0.3rem;
+            border: 2px solid #ffbcd6;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .play-hint i {
+            font-size: 1rem;
+        }
+
+        /* empty state */
+        .no-results {
+            grid-column: 1 / -1;
+            background: #ffe7b9;
+            border-radius: 70px;
+            padding: 3rem;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #6f3996;
+            border: 6px dotted #ff9fd0;
+            text-align: center;
+            margin: 3rem 0;
+        }
+
+        footer {
+            margin-top: 3.5rem;
+            font-size: 1.2rem;
+            color: #c26296;
+            font-weight: 600;
+        }
+
+        /* responsive touch ups */
+        @media (max-width: 500px) {
+            .fun-header {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 1.2rem;
+            }
+            .logo-area h1 {
+                font-size: 2rem;
+            }
+            .game-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1.2rem;
+            }
+            .icon-wrapper {
+                width: 90px;
+                height: 90px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="galaxy-wrapper">
+        <!-- header with name + search -->
+        <div class="fun-header">
+            <div class="logo-area">
+                <i class="fas fa-rocket"></i>
+                <h1>FunGalaxy</h1>
+            </div>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="search games..." aria-label="search games">
+                <button id="searchBtn"><i class="fas fa-gamepad"></i> Go</button>
+            </div>
+        </div>
+
+        <!-- data status will appear here -->
+        <div id="statusMessage" class="status-message">
+            <i class="fas fa-stars"></i> loading your galaxy...
+        </div>
+
+        <!-- grid container injected from js -->
+        <div id="gameGridContainer" class="game-grid"></div>
+
+        <footer>
+            ⭐ click any game to play ⭐
+        </footer>
+    </div>
+
+    <script>
+        (function() {
+            // --- DOM elements ---
+            const statusDiv = document.getElementById('statusMessage');
+            const gridContainer = document.getElementById('gameGridContainer');
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+
+            // --- raw data storage ---
+            let allGames = [];               // full parsed games { name, icon, link }
+            let filteredGames = [];           // after search
+
+            // --- CSV URL (provided by user) ---
+            const CSV_URL = "https://docs.google.com/spreadsheets/d/16ZqeIw9UD3675ET7mktUK3qt-2IXAr7__DHxOS5oREc/export?format=csv";
+
+            // --- helper: parse CSV text (handles quoted fields, basic commas) ---
+            function parseCSVLine(line) {
+                const result = [];
+                let cell = '';
+                let inQuotes = false;
+                for (let i = 0; i < line.length; i++) {
+                    const ch = line[i];
+                    if (ch === '"') {
+                        inQuotes = !inQuotes;      // toggle quoted mode
+                    } else if (ch === ',' && !inQuotes) {
+                        result.push(cell.trim());
+                        cell = '';
+                    } else {
+                        cell += ch;
+                    }
+                }
+                result.push(cell.trim()); // last cell
+                return result;
+            }
+
+            // --- fetch and parse CSV ---
+            async function loadGames() {
+                try {
+                    statusDiv.innerHTML = `<i class="fas fa-spinner fa-pulse"></i> fetching games ...`;
+                    const response = await fetch(CSV_URL, {
+                        method: 'GET',
+                        mode: 'cors',        // attempt CORS mode, but may fail due to google restrictions
+                        cache: 'no-cache',
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error ${response.status}`);
+                    }
+
+                    const csvText = await response.text();
+                    const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== '');
+
+                    if (lines.length < 2) {   // at least header + one game
+                        throw new Error('CSV seems empty or missing data rows.');
+                    }
+
+                    // assume first line is header: Name, Icon, Link (case-insensitive)
+                    const header = lines[0].split(',').map(h => h.trim().toLowerCase());
+                    // find indices (flexible order)
+                    const nameIdx = header.findIndex(h => h.includes('name'));
+                    const iconIdx = header.findIndex(h => h.includes('icon'));
+                    const linkIdx = header.findIndex(h => h.includes('link'));
+
+                    if (nameIdx === -1 || iconIdx === -1 || linkIdx === -1) {
+                        throw new Error('CSV must contain columns: Name, Icon, Link');
+                    }
+
+                    const games = [];
+                    for (let i = 1; i < lines.length; i++) {
+                        const row = parseCSVLine(lines[i]);
+                        if (row.length <= Math.max(nameIdx, iconIdx, linkIdx)) continue; // skip malformed
+
+                        const name = row[nameIdx]?.replace(/^"|"$/g, '').trim() || '?';
+                        let icon = row[iconIdx]?.replace(/^"|"$/g, '').trim() || '';
+                        let link = row[linkIdx]?.replace(/^"|"$/g, '').trim() || '';
+
+                        // simple validation: we need at least name & link
+                        if (name === '?' || name === '' || link === '') continue;
+
+                        games.push({
+                            name: name,
+                            icon: icon,
+                            link: link
+                        });
+                    }
+
+                    if (games.length === 0) {
+                        throw new Error('No valid game entries found after parsing.');
+                    }
+
+                    allGames = games;
+                    filteredGames = [...games];
+                    statusDiv.style.display = 'none';   // hide status when success
+                    renderGrid(filteredGames);
+
+                } catch (error) {
+                    console.warn('Fetch/parse error:', error);
+                    // user-friendly fallback: show instructions, and optionally load some demo? but keep integrity
+                    statusDiv.innerHTML = `
+                        <i class="fas fa-exclamation-triangle"></i> 
+                        Whoa! Couldn't load the game sheet automatically.<br>
+                        <span style="font-size: 1rem;">Make sure the CSV is <strong>"published to the web"</strong> or accessible via CORS proxy.<br>
+                        For now, you can see below how it will look — data is ready once the link works.<br>
+                        <em style="color:#6f3f8a;">(link used: ${CSV_URL})</em></span>
+                    `;
+                    // show empty grid or sample message
+                    gridContainer.innerHTML = `<div class="no-results"><i class="fas fa-smile-wink"></i> please check CSV permissions :)<br><small style="font-size:1.2rem;">(see instructions above)</small></div>`;
+                }
+            }
+
+            // --- render games based on array ---
+            function renderGrid(gamesArray) {
+                if (!gamesArray || gamesArray.length === 0) {
+                    gridContainer.innerHTML = `<div class="no-results"><i class="fas fa-heart-broken"></i> no games found ... try another word?</div>`;
+                    return;
+                }
+
+                let html = '';
+                gamesArray.forEach(game => {
+                    // sanitize strings for attributes (escape quotes)
+                    const safeName = game.name.replace(/"/g, '&quot;');
+                    const safeLink = game.link.replace(/"/g, '&quot;');
+                    const safeIcon = game.icon ? game.icon.replace(/"/g, '&quot;') : '';
+
+                    // icon handling: if icon field exists and plausible url, else show star
+                    const iconHtml = (safeIcon && (safeIcon.startsWith('http') || safeIcon.startsWith('//')))
+                        ? `<img src="${safeIcon}" alt="${safeName}" loading="lazy" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\\'fas fa-star fallback-icon\\'></i>';">`
+                        : `<i class="fas fa-gamepad fallback-icon"></i>`;
+
+                    html += `
+                        <div class="game-card" data-link="${safeLink}" role="button" tabindex="0" aria-label="play ${safeName}">
+                            <div class="icon-wrapper">
+                                ${iconHtml}
+                            </div>
+                            <div class="game-title">${game.name}</div>
+                            <div class="play-hint"><i class="fas fa-play-circle"></i> play</div>
+                        </div>
+                    `;
+                });
+
+                gridContainer.innerHTML = html;
+
+                // attach click listeners to each card
+                document.querySelectorAll('.game-card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        const link = card.dataset.link;
+                        if (link) {
+                            // open in a new tab (safe for children, they can come back)
+                            window.open(link, '_blank', 'noopener,noreferrer');
+                        } else {
+                            alert('sorry, no link for this game');
+                        }
+                    });
+
+                    // keyboard accessibility
+                    card.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            card.click();
+                        }
+                    });
+                });
+            }
+
+            // --- filter function (case-insensitive) ---
+            function applySearch() {
+                const term = searchInput.value.trim().toLowerCase();
+                if (term === '') {
+                    filteredGames = [...allGames];
+                } else {
+                    filteredGames = allGames.filter(g => g.name.toLowerCase().includes(term));
+                }
+                renderGrid(filteredGames);
+            }
+
+            // --- event listeners for search ---
+            searchBtn.addEventListener('click', applySearch);
+            searchInput.addEventListener('keyup', (e) => {
+                if (e.key === 'Enter') {
+                    applySearch();
+                }
+            });
+            // realtime optional (just for fun) – we'll use go button as requested, but also allow typing + enter
+
+            // --- initialize : load games ---
+            loadGames();
+
+            // in case sheet fails, we still want a usable interface with empty state
+            // but we can also prepopulate allGames = [] , so search just shows nothing.
+        })();
+    </script>
+</body>
+</html>
